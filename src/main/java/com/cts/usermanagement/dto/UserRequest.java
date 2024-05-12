@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserRequest {
 
-    private Long userId;
+    private Long employeeId;
     private String userName;
     @NotEmpty(message = "department field should be not empty")
     private String department;

@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
+    @Column(name = "USER_ID")
+    private Long employeeId;
     private String userName;
     private String department;
     private String managerName;

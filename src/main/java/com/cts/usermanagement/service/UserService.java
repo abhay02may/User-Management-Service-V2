@@ -13,7 +13,7 @@ public interface UserService {
 
     List<UserResponse> findAllUsers();
 
-    void updateUser(UserRequest userRequest);
+    UserResponse updateUser(UserRequest userRequest) throws UserNotFoundException;
 
     Long deleteUserByUserId(Long userId);
 }

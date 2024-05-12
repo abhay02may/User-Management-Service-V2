@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class UserResponse {
-    private Long userId;
+    private Long employeeId;
     private String userName;
     private String department;
     private String managerName;

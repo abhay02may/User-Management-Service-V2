@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Procedure(procedureName  = "DELETE_USER")
     void deleteUserByUserId(Long userId);
 
-    @Query(value = "SELECT MAX(USER_ID) FROM USER", nativeQuery = true)
+    @Query(value = "SELECT COALESCE((MAX(USER_ID) + 1), 1) FROM USER", nativeQuery = true)
     Long getMaxUserId();
 
 

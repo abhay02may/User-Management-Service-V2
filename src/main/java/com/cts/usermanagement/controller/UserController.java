@@ -16,23 +16,28 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
 
-    /*@Autowired
+    private final UserService userService;
+
     public UserController(UserService userService) {
         this.userService = userService;
-    }*/
+    }
 
     @PostMapping
     public ResponseEntity<Long> saveUser(@RequestBody @Valid UserRequest userRequest){
-       Long userId= userService.saveUser(userRequest);
-       return new ResponseEntity<>(userId, HttpStatus.CREATED);
+       Long employeeId= userService.saveUser(userRequest);
+       if(employeeId==null){
+           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+       }
+       return new ResponseEntity<>(employeeId, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponse> findUserById(@PathVariable("userId") Long userId) throws UserNotFoundException {
-      UserResponse userResponse= userService.findUserById(userId);
+    @GetMapping("/{employeeId}")
+    public ResponseEntity<UserResponse> findUserById(@PathVariable("employeeId") Long employeeId) throws UserNotFoundException {
+      UserResponse userResponse= userService.findUserById(employeeId);
+      if(userResponse==null){
+          return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+      }
       return new ResponseEntity<>(userResponse,HttpStatus.OK);
     }
 
@@ -43,17 +48,20 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateUser(@RequestBody @Valid UserRequest userRequest){
-        if(userRequest.getUserId()==null){
+    public ResponseEntity<UserResponse> updateUser(@RequestBody @Valid UserRequest userRequest) throws UserNotFoundException {
+        if(userRequest.getEmployeeId()==null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        userService.updateUser(userRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+       UserResponse userResponse= userService.updateUser(userRequest);
+        return new ResponseEntity<>(userResponse,HttpStatus.OK);
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Long> deleteUserByUserId(@PathVariable("userId") Long userId){
-        Long deletedUserId=userService.deleteUserByUserId(userId);
+    @DeleteMapping("/{employeeId}")
+    public ResponseEntity<Long> deleteUserByUserId(@PathVariable("employeeId") Long employeeId){
+        Long deletedUserId=userService.deleteUserByUserId(employeeId);
+        if(deletedUserId==null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(deletedUserId,HttpStatus.OK);
     }
 }
