@@ -15,5 +15,5 @@ public interface UserService {
 
     UserResponse updateUser(UserRequest userRequest) throws UserNotFoundException;
 
-    Long deleteUserByUserId(Long userId);
+    Long deleteUserByUserId(Long userId) throws UserNotFoundException;
 }

@@ -68,10 +68,17 @@ public class UserServiceImpl implements UserService {
         return userResponse;
     }
 
+    @Transactional
     @Override
-    public Long deleteUserByUserId(Long userId) {
-        repository.deleteUserByUserId(userId);
-        return userId;
+    public Long deleteUserByUserId(Long userId) throws UserNotFoundException {
+        User user = repository.findByUserId(userId);
+        if (user != null) {
+            repository.deleteUserByUserId(userId);
+            return userId;
+        } else {
+            throw new UserNotFoundException("User for the Given user Id : " + userId + " not found", "USER_NOT_FOUND", 404);
+        }
+
     }
 
 

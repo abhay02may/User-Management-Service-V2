@@ -1,21 +1,22 @@
-package com.cts.usermanagement.config;
+package com.cts.usermanagement.exception;
 
-import com.cts.usermanagement.exception.UserNotFoundException;
 import com.cts.usermanagement.external.ErrorResponse;
 import com.cts.usermanagement.external.Error;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
-public class UserServiceExceptionHandler extends ResponseEntityExceptionHandler {
+@RestControllerAdvice
+public class CustomControllerAdvice {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
@@ -43,7 +44,7 @@ public class UserServiceExceptionHandler extends ResponseEntityExceptionHandler 
         return new ResponseEntity<>(errorResponse, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    /*@ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<ErrorResponse> handleAnyValidationError(MethodArgumentNotValidException exception) {
@@ -57,5 +58,5 @@ public class UserServiceExceptionHandler extends ResponseEntityExceptionHandler 
                 .errors(errors)
                 .build();
         return new ResponseEntity<>(errorResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }*/
+    }
 }

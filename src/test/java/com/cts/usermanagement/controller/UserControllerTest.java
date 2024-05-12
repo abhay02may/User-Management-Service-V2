@@ -1,9 +1,9 @@
 package com.cts.usermanagement.controller;
 
 
-import com.cts.usermanagement.config.UserServiceExceptionHandler;
 import com.cts.usermanagement.dto.UserRequest;
 import com.cts.usermanagement.dto.UserResponse;
+import com.cts.usermanagement.exception.CustomControllerAdvice;
 import com.cts.usermanagement.exception.UserNotFoundException;
 import com.cts.usermanagement.service.UserService;
 import com.cts.usermanagement.service.UserServiceImpl;
@@ -30,8 +30,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 public class UserControllerTest {
 
@@ -46,7 +49,7 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).setControllerAdvice(new UserServiceExceptionHandler()).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).setControllerAdvice(new CustomControllerAdvice()).build();
         this.mapper = new ObjectMapper();
     }
 
@@ -76,6 +79,7 @@ public class UserControllerTest {
 
         //then
         mockMvc.perform(mockRequest)
+                .andDo(print())
                 .andExpect(status().isCreated());
     }
 
@@ -86,7 +90,7 @@ public class UserControllerTest {
         UserRequest userRequest = UserRequest.builder()
                 .userName("Johny Liver")
                 .department(null)
-                .managerName(null)
+                .managerName("Abhay")
                 .build();
 
         Long employeeId=1234L;
@@ -102,8 +106,8 @@ public class UserControllerTest {
 
         //then
         mockMvc.perform(mockRequest)
-                .andDo(print())
-                .andExpect(status().isBadRequest());
+               .andExpect(status().isBadRequest())
+          .andExpect(jsonPath("$.errors.[0].message", is("department field should be not empty")));
     }
 
     @Test
@@ -215,7 +219,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUserByUserId_HappyPath() {
+    public void testDeleteUserByUserId_HappyPath() throws UserNotFoundException {
         // Arrange
         UserService userService = mock(UserService.class);
         UserController userController = new UserController(userService);
@@ -233,7 +237,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUserByUserId_UnhappyPath() {
+    public void testDeleteUserByUserId_UnhappyPath() throws UserNotFoundException {
         // Arrange
         UserService userService = mock(UserService.class);
         UserController userController = new UserController(userService);
